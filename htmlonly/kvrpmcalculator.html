@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>RPM Calculator</title>
+</head>
+<body>
+	<h2>RPM Calculator</h2>
+	<form>
+		<label for="lipo-counts">LiPo Cell Count:</label>
+		<input type="number" id="lipo-counts" name="lipo-counts" min="1" max="6"><br><br>
+		<label for="motor-kv">Motor KV:</label>
+		<input type="number" id="motor-kv" name="motor-kv" min="1" max="5000"><br><br>
+		<label for="gear-reduction-ratio">Reduction Ratio:</label>
+		<input type="number" id="gear-reduction-ratio1" name="gear-reduction-ratio1" min="1" max="100">:
+		<input type="number" id="gear-reduction-ratio2" name="gear-reduction-ratio2" min="1" max="100"><br><br>
+		<label for="rpm">RPM:</label>
+		<input type="number" id="rpm" name="rpm" min="1" max="100000"><br><br>
+		<button type="button" onclick="calculate()">Calculate</button>
+		<button type="reset">Reset</button>
+	</form>
+	<br>
+	<div id="result"></div>
+	<script>
+		function calculate() {
+			var lipoCounts = parseInt(document.getElementById("lipo-counts").value);
+			var motorKV = parseInt(document.getElementById("motor-kv").value);
+			var gearReduction1 = parseInt(document.getElementById("gear-reduction-ratio1").value);
+			var gearReduction2 = parseInt(document.getElementById("gear-reduction-ratio2").value);
+			var rpm = parseInt(document.getElementById("rpm").value);
+			
+			if (isNaN(rpm)) {
+				// Calculate RPM if it's missing
+				rpm = lipoCounts * 3.7 * motorKV / (gearReduction1 / gearReduction2);
+				document.getElementById("rpm").value = rpm;
+			} else if (isNaN(lipoCounts)) {
+				// Calculate LiPo cell count if it's missing
+				lipoCounts = rpm * (gearReduction1 / gearReduction2) / (3.7 * motorKV);
+				document.getElementById("lipo-counts").value = lipoCounts.toFixed(2);
+			} else if (isNaN(motorKV)) {
+				// Calculate motor KV if it's missing
+				motorKV = rpm * (gearReduction1 / gearReduction2) / (3.7 * lipoCounts);
+				document.getElementById("motor-kv").value = motorKV.toFixed(2);
+			} else if (isNaN(gearReduction1) || isNaN(gearReduction2)) {
+				// Calculate gear reduction if it's missing
+				gearReduction1 = 1;
+				gearReduction2 = lipoCounts * 3.7 * motorKV / rpm;
+				document.getElementById("gear-reduction-ratio1").value = gearReduction1;
+				document.getElementById("gear-reduction-ratio2").value = gearReduction2.toFixed(2);
+			}
+			
+			document.getElementById("result").innerHTML = "RPM: " + rpm.toFixed(2);
+		}
+	</script>
+</body>
+</html>
